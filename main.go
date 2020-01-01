@@ -27,7 +27,7 @@ func main() {
 	router := gin.Default()
 	router.GET("/", getHome)
 	router.GET("/about", getAbout)
-	router.GET("/content/:title", getContent)
+	router.GET("/content/:slug", getContent)
 	router.POST("/contents", postContent)
 
 	router.Run()
@@ -49,11 +49,21 @@ func getAbout(c *gin.Context) {
 	})
 }
 func getContent(c *gin.Context) {
-	title := c.Param("title")
+	slug := c.Param("slug")
+	var item Article
+	if DB.First(&item, "slug=?", slug).RecordNotFound() {
+		c.JSON(404, gin.H{
+			"status": "error",
+			"msg":    "record not found",
+		})
+		c.Abort()
+		return
+	}
+
 	//tiko: this is get from db api, thanks
 	c.JSON(200, gin.H{
-		"message": title,
-		"status":  "Ok",
+		"data":   item,
+		"status": "Ok",
 	})
 }
 
