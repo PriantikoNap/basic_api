@@ -68,12 +68,14 @@ func getContent(c *gin.Context) {
 }
 
 func postContent(c *gin.Context) {
-	title := c.PostForm("title")
-	desc := c.PostForm("desc")
-
+	item := Article{
+		Title: c.PostForm("title"),
+		Desc:  c.PostForm("desc"),
+		Slug:  c.PostForm("slug"),
+	}
+	DB.Create(&item)
 	c.JSON(200, gin.H{
 		"status": "berhasil",
-		"title":  title,
-		"desc":   desc,
+		"data":   item,
 	})
 }
